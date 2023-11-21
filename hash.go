@@ -102,7 +102,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 			if Informacoes.Nome != current.Nome {
 				Hash.Verificador_colisao = true
 			}
-			current = Hash.Dados_Usuario.Next
+			current = current.Next
 		}
 		current.Next = Informacoes
 	}
@@ -151,16 +151,26 @@ func Rehash(hash_table *Hash) {
 	// If novo
 	if i < max {
 		for _, indice := range hash_table.Referencias {
-			Hash := hash_table.Indices[indice]
-			if Hash.Verificador_colisao {
+			Hash_Auxiliar := hash_table.Indices[indice]
+			if Hash_Auxiliar.Verificador_colisao {
+				
 
+
+				
 			} else {
-				NovoIndice := Peso_strings(Hash.Dados_Usuario.Nome, hash_table)
-				hash_table.Indices[NovoIndice].Dados_Usuario = Hash.Dados_Usuario
-				hash_table.Indices[NovoIndice].Verificador_colisao = false
-
-				//Novo
-				Hash.Dados_Usuario = nil
+				NovoIndice := Peso_strings(Hash_Auxiliar.Dados_Usuario.Nome, hash_table)
+				if hash_table.Indices[NovoIndice].Dados_Usuario == nil{
+					hash_table.Indices[NovoIndice].Dados_Usuario = Hash_Auxiliar.Dados_Usuario
+					hash_table.Indices[NovoIndice].Verificador_colisao = false
+				} else {
+					current := hash_table.Indices[NovoIndice].Dados_Usuario
+					for current.Next != nil {
+						current = current.Next
+					}
+					current.Next = Hash_Auxiliar.Dados_Usuario
+					Hash_Auxiliar.Verificador_colisao = true
+				}
+				Hash_Auxiliar.Dados_Usuario = nil
 			}
 		}
 	} else {
