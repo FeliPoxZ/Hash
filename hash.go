@@ -7,13 +7,13 @@ import (
 //map := make(map[int]*Dados)
 
 type Hash struct {
-	Indices []VetorHash
+	Indices    []VetorHash
 	Quantidade int
 }
 
 type VetorHash struct {
-	Dados_Usuario *Dados
-	Nome string
+	Dados_Usuario     *Dados
+	Nome              string
 	Referencia_Indice int
 }
 
@@ -32,7 +32,10 @@ func main() {
 	hash = CriaHash()
 
 	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	fmt.Println(hash.Indices[7])
+	InserirDados(hash, "Gabriel", "Rua", "Telefone")
+	InserirDados(hash, "Jose", "Rua", "Telefone")
+	InserirDados(hash, "Ana", "Rua", "Telefone")
+	fmt.Println(hash)
 
 }
 
@@ -40,7 +43,7 @@ func CriaHash() *Hash {
 
 	hash_Table := &Hash{Indices: nil, Quantidade: 0}
 
-	hash_Table.Indices = make([]VetorHash, 10) //Indices aponta agora para um slice
+	hash_Table.Indices = make([]VetorHash, 2) //Indices aponta agora para um slice
 	return hash_Table
 }
 
@@ -56,25 +59,43 @@ func Peso_strings(nome string, hash_tb *Hash) int {
 	}
 
 	Peso = Somatoria
-	return Peso % (len(hash_tb.Indices) + 1)
+	retorno := Peso % (len(hash_tb.Indices) + 1)
+	fmt.Print("Nome: ", nome, "\n", "Peso: ", retorno, "\n\n")
+	return retorno
 }
 
 func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Telefone_input string) {
 
-	Indice_peso := Peso_strings(Nome_input, hash_table)
-	fmt.Println(Indice_peso)
-
- 	if len(hash_table.Indices) < Indice_peso {
-
-		temporary := make([]VetorHash, Indice_peso+1)
-		copy(temporary, hash_table.Indices)
-		hash_table.Indices = temporary
-	} 
+	Indice_Original := Peso_strings(Nome_input, hash_table)
 
 	Informacoes := &Dados{Nome: Nome_input, Endereco: Endereco_input, Telefone: Telefone_input}
+	Indice := Indice_Original
 
+	if len(hash_table.Indices) <= Indice_Original {
 
-	hash_table.Indices[Indice_peso].Dados_Usuario = Informacoes
-	hash_table.Indices[Indice_peso].Referencia_Indice = Indice_peso
+		temporary := make([]VetorHash, Indice_Original+1)
+		copy(temporary, hash_table.Indices)
+		hash_table.Indices = temporary
+	}
+
+	for hash_table.Indices[Indice].Dados_Usuario != nil && hash_table.Indices[Indice].Nome != Nome_input {
+		Indice++
+		fmt.Print("Novo indice ", Indice, "\n\n")
+		if Indice >= len(hash_table.Indices) {
+			temporary := make([]VetorHash, Indice+1)
+			copy(temporary, hash_table.Indices)
+			hash_table.Indices = temporary
+		}
+	}
+
+	hash_table.Indices[Indice].Dados_Usuario = Informacoes
+	hash_table.Indices[Indice].Nome = Nome_input
+
+	if Indice != Indice_Original {
+		hash_table.Indices[Indice_Original].Referencia_Indice = Indice
+	} else {
+		hash_table.Indices[Indice_Original].Referencia_Indice = Indice_Original
+	}
+
 	hash_table.Quantidade++
 }
