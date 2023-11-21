@@ -35,10 +35,21 @@ func main() {
 	// Insere dados no Hash
 	InserirDados(hash, "Felipe", "Rua", "Telefone")
 	InserirDados(hash, "Felipe", "Rua", "Telefone")
+	InserirDados(hash, "Felipe", "Rua", "Telefone")
 	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Gabriel", "Rua", "Telefone")
+	InserirDados(hash, "Otavio", "Rua", "Telefone")
 
 	// Busca dados no Hash
 	BuscaHash(hash, "Felipe")
+	BuscaHash(hash, "Ana")
+	BuscaHash(hash, "Gabriel")
+	BuscaHash(hash, "Otavio")
+
+	for i := 0; i < len(hash.Indices); i++ {
+		fmt.Println(hash.Indices[i].Dados_Usuario)
+	}
 
 }
 
@@ -46,7 +57,7 @@ func main() {
 func CriaHash() *Hash {
 
 	// Cria um novo Hash com um slice de VetorHash de tamanho 250
-	hash_Table := &Hash{Indices: make([]VetorHash, 250), Referencias: make([]int, 0), Quantidade: 0}
+	hash_Table := &Hash{Indices: make([]VetorHash, 10), Referencias: make([]int, 0), Quantidade: 0}
 
 	return hash_Table
 }
@@ -68,7 +79,7 @@ func Peso_strings(nome string, hash_table *Hash) int {
 
 	// Calcula o índice baseado no peso e no tamanho do slice
 	Resto := Peso % (len(hash_table.Indices) + 1)
-	println(Peso)
+	//println(Peso)
 	return Resto
 }
 
@@ -86,6 +97,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 		temporary := make([]VetorHash, len(hash_table.Indices)*2)
 		copy(temporary, hash_table.Indices)
 		hash_table.Indices = temporary
+		Rehash(hash_table)
 	}
 
 	// Cria um alias para o VetorHash no índice
@@ -109,6 +121,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 
 	// Incrementa a quantidade de dados no Hash
 	hash_table.Quantidade++
+	fmt.Println("\n", Nome_input)
 	fmt.Println(hash_table.Referencias)
 }
 
@@ -141,37 +154,44 @@ func BuscaHash(hash_table *Hash, Nome_search string) {
 
 func Rehash(hash_table *Hash) {
 
-	// Novo
+	fmt.Print("Iniciando rehash", "\n\n")
+	Referencia := hash_table.Referencias
+	hash_table.Referencias = make([]int, 0)
+
 	i := 0
 	max := 100
-	for FlagNovoPeso(hash_table) && i < max {
+	for FlagNovoPeso(hash_table, Referencia) && i < max {
 		i++
 	}
 
-	// If novo
 	if i < max {
-		for _, indice := range hash_table.Referencias {
+		for _, indice := range Referencia {
 			Hash_Auxiliar := hash_table.Indices[indice]
 			if Hash_Auxiliar.Verificador_colisao {
-				
-
-
-				
+				current := Hash_Auxiliar.Dados_Usuario
+				for current != nil {
+					InserirDados(hash_table, current.Nome, current.Endereco, current.Telefone)
+					current = current.Next
+				}
+				Hash_Auxiliar.Dados_Usuario = nil
+				Hash_Auxiliar.Verificador_colisao = false
 			} else {
 				NovoIndice := Peso_strings(Hash_Auxiliar.Dados_Usuario.Nome, hash_table)
-				if hash_table.Indices[NovoIndice].Dados_Usuario == nil{
+				if hash_table.Indices[NovoIndice].Dados_Usuario == nil {
 					hash_table.Indices[NovoIndice].Dados_Usuario = Hash_Auxiliar.Dados_Usuario
 					hash_table.Indices[NovoIndice].Verificador_colisao = false
+					hash_table.Referencias = append(hash_table.Referencias, NovoIndice)
 				} else {
 					current := hash_table.Indices[NovoIndice].Dados_Usuario
 					for current.Next != nil {
 						current = current.Next
 					}
 					current.Next = Hash_Auxiliar.Dados_Usuario
-					Hash_Auxiliar.Verificador_colisao = true
+					hash_table.Indices[NovoIndice].Verificador_colisao = true
 				}
 				Hash_Auxiliar.Dados_Usuario = nil
 			}
+			Hash_Auxiliar.Dados_Usuario = nil
 		}
 	} else {
 		fmt.Println("Erro de rehash!")
@@ -180,12 +200,11 @@ func Rehash(hash_table *Hash) {
 
 }
 
-// Novo
 // FlagNovoPeso é uma função que recebe uma tabela hash e retorna um booleano.
-func FlagNovoPeso(hash_table *Hash) bool {
+func FlagNovoPeso(hash_table *Hash, Referencia []int) bool {
 
 	// O loop for percorre cada índice na lista de referências da tabela hash.
-	for _, indice := range hash_table.Referencias {
+	for _, indice := range Referencia {
 		// Hash é um alias que armazena o valor no índice atual da tabela hash.
 		Hash := hash_table.Indices[indice]
 		// Se o verificador de colisão do Hash for verdadeiro, o código dentro deste bloco if será executado.
