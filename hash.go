@@ -52,7 +52,7 @@ func CriaHash() *Hash {
 }
 
 // Função para calcular o peso de uma string
-func Peso_strings(nome string, hash_tb *Hash) int {
+func Peso_strings(nome string, hash_table *Hash) int {
 
 	var Peso int
 	Grau := len(nome)
@@ -67,8 +67,8 @@ func Peso_strings(nome string, hash_tb *Hash) int {
 	Peso = Somatoria
 
 	// Calcula o índice baseado no peso e no tamanho do slice
-	Resto := Peso % (len(hash_tb.Indices) + 1)
-
+	Resto := Peso % (len(hash_table.Indices) + 1)
+	println(Peso)
 	return Resto
 }
 
@@ -113,13 +113,13 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 }
 
 // Função para buscar dados no Hash
-func BuscaHash(Hash_Table *Hash, Nome_search string) {
+func BuscaHash(hash_table *Hash, Nome_search string) {
 
 	// Calcula o índice onde os dados devem estar
-	Indice := Peso_strings(Nome_search, Hash_Table)
+	Indice := Peso_strings(Nome_search, hash_table)
 
 	// Começa a busca no primeiro Dados no índice
-	current := Hash_Table.Indices[Indice].Dados_Usuario
+	current := hash_table.Indices[Indice].Dados_Usuario
 
 	// Se não há dados no índice, imprime uma mensagem
 	if current == nil {
@@ -136,5 +136,21 @@ func BuscaHash(Hash_Table *Hash, Nome_search string) {
 			fmt.Printf("\nTelefone: %s\n", current.Telefone)
 		}
 		current = current.Next
+	}
+}
+
+func Rehash(hash_table *Hash){
+
+	for _, indice := range hash_table.Referencias{
+		Hash := hash_table.Indices[indice]
+		if Hash.Verificador_colisao {
+
+		} else {
+			NovoIndice := Peso_strings(Hash.Dados_Usuario.Nome, hash_table)
+			hash_table.Indices[NovoIndice].Dados_Usuario = Hash.Dados_Usuario
+			hash_table.Indices[NovoIndice].Verificador_colisao = false
+			
+		}
+
 	}
 }
