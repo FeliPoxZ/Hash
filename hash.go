@@ -32,12 +32,8 @@ func main() {
 
 	InserirDados(hash, "Felipe", "Rua", "Telefone")
 	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	InserirDados(hash, "Gabriel", "Rua", "Telefone")
-	InserirDados(hash, "Jose", "Rua", "Telefone")
 	InserirDados(hash, "Ana", "Rua", "Telefone")
-	fmt.Println(hash.Indices[6].Dados_Usuario.Next)
-	fmt.Println(hash.Indices[6])
-	fmt.Println(hash.Quantidade)
+	BuscaHash(hash, "Felipe")
 
 }
 
@@ -60,9 +56,11 @@ func Peso_strings(nome string, hash_tb *Hash) int {
 		Grau--
 	}
 
+	//Violeta
+
 	Peso = Somatoria
 	retorno := Peso % (len(hash_tb.Indices) + 1)
-	//fmt.Print("Nome: ", nome, "\n", "Peso: ", retorno, "\n\n")
+	fmt.Print("Nome: ", nome, "\n", "Peso: ", Peso,"\n" ,"Resto: ", retorno, "\n\n")
 	return retorno
 }
 
@@ -76,14 +74,14 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 	//fmt.Println("Indice:", Indice)
 	//fmt.Println("Length of Indices:", len(hash_table.Indices))
 	
-	if len(hash_table.Indices) <= Indice {
+	if len(hash_table.Indices) <= Indice { 
 		//fmt.Println("Resizing Indices...")
 		temporary := make([]VetorHash, len(hash_table.Indices)*2)
 		copy(temporary, hash_table.Indices)
 		hash_table.Indices = temporary
 	}
 	
-	Hash := &hash_table.Indices[Indice]
+	Hash := &hash_table.Indices[Indice] //alias
 
 	if Hash.Dados_Usuario == nil {
 		Hash.Dados_Usuario = Informacoes
@@ -99,28 +97,28 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 	}
 
 	hash_table.Quantidade++
-
-	/*
-
-	for hash_table.Indices[Indice].Dados_Usuario != nil && hash_table.Indices[Indice].Nome != Nome_input {
-		Indice++
-		fmt.Print("Novo indice ", Indice, "\n\n")
-		if Indice >= len(hash_table.Indices) {
-			temporary := make([]VetorHash, Indice+1)
-			copy(temporary, hash_table.Indices)
-			hash_table.Indices = temporary
-		}
-	}
-
-	hash_table.Indices[Indice].Dados_Usuario = Informacoes
-	hash_table.Indices[Indice].Nome = Nome_input
-
-	if Indice != Indice_Original {
-		hash_table.Indices[Indice_Original].Referencia_Indice = Indice
-	} else {
-		hash_table.Indices[Indice_Original].Referencia_Indice = Indice_Original
-	}
-
-	hash_table.Quantidade++4
-	*/
 }
+
+func BuscaHash(Hash_Table *Hash, Nome_search string) {
+
+	Indice := Peso_strings(Nome_search, Hash_Table)
+
+	current := Hash_Table.Indices[Indice].Dados_Usuario
+	i := 0
+
+	if current == nil {
+		fmt.Println("Nenhum dado encontrado")
+	}
+
+	for current != nil {
+		if current.Nome == Nome_search {
+			i ++
+			fmt.Printf("\nNome: %s (%d)", current.Nome, i)
+			fmt.Printf("\nEndereço: %s", current.Endereco)
+			fmt.Printf("\nTelefone: %s\n", current.Telefone)
+		}
+		current = current.Next
+	}
+
+}
+
