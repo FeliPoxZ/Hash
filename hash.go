@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 // Estrutura Hash que contém um slice de VetorHash, um contador de quantidade, e um vetor para salvar indices adicionados
@@ -27,29 +29,77 @@ type Dados struct {
 
 func main() {
 
+	var names = []string{
+		"Alice", "Bob", "Charlie", "Dave", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy",
+		"Karen", "Larry", "Mary", "Nick", "Oliver", "Pam", "Quentin", "Rebecca", "Steve", "Tina",
+		"Uma", "Victor", "Wendy", "Xavier", "Yvonne", "Zach", "Aaron", "Bella", "Cindy", "Diana",
+		"Ethan", "Fiona", "Gary", "Hannah", "Irene", "Jack", "Kate", "Liam", "Mia", "Nora",
+		"Oscar", "Phoebe", "Quinn", "Riley", "Sophia", "Toby", "Ursula", "Vince", "Willow", "Xena",
+		"Yuri", "Zoe", "Ava", "Brad", "Celine", "Darcy", "Eli", "Felicity", "Gabriel", "Hannah",
+		"Ivy", "Jake", "Kira", "Liam", "Miles", "Natalie", "Ollie", "Penelope", "Quincy", "Riley",
+		"Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella",
+		"Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily",
+		"Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet",
+		"Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona",
+		"Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe",
+		"Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe",
+		"Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine",
+		"Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted",
+		"Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy",
+		"Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora",
+		"Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe",
+		"Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah",
+		"Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley",
+		"Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella",
+		"Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily",
+		"Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet",
+		"Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona",
+		"Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe",
+		"Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe",
+		"Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine",
+		"Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted",
+		"Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy",
+		"Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora",
+		"Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe",
+		"Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah",
+		"Ivan", "Jasmine"}
+
 	var hash *Hash
 
 	// Cria um novo Hash
 	hash = CriaHash()
 
 	// Insere dados no Hash
-	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	InserirDados(hash, "Ana", "Rua", "Telefone")
-	InserirDados(hash, "Ana", "Rua", "Telefone")
-	InserirDados(hash, "Gabriel", "Rua", "Telefone")
-	InserirDados(hash, "Otavio", "Rua", "Telefone")
+	/* 	InserirDados(hash, "Felipe", "Rua", "Telefone")
+	   	InserirDados(hash, "Felipe", "Rua", "Telefone")
+	   	InserirDados(hash, "Felipe", "Rua", "Telefone")
+	   	InserirDados(hash, "Ana", "Rua", "Telefone")
+	   	InserirDados(hash, "Ana", "Rua", "Telefone")
+	   	InserirDados(hash, "Gabriel", "Rua", "Telefone")
+	   	InserirDados(hash, "Otavio", "Rua", "Telefone") */
 
-	// Busca dados no Hash
+	/* // Busca dados no Hash
 	BuscaHash(hash, "Felipe")
 	BuscaHash(hash, "Ana")
 	BuscaHash(hash, "Gabriel")
 	BuscaHash(hash, "Otavio")
+	*/
+
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < 100; i++ {
+		name := names[rand.Intn(len(names))]
+		InserirDados(hash, name, "Rua", "Telefone")
+	}
 
 	for i := 0; i < len(hash.Indices); i++ {
 		fmt.Println(hash.Indices[i].Dados_Usuario)
 	}
+
+	for _, name := range names {
+		BuscaHash(hash, name)
+	}
+
+	fmt.Println(hash.Quantidade)
 
 }
 
@@ -57,7 +107,7 @@ func main() {
 func CriaHash() *Hash {
 
 	// Cria um novo Hash com um slice de VetorHash de tamanho 250
-	hash_Table := &Hash{Indices: make([]VetorHash, 10), Referencias: make([]int, 0), Quantidade: 0}
+	hash_Table := &Hash{Indices: make([]VetorHash, 5), Referencias: make([]int, 0), Quantidade: 0}
 
 	return hash_Table
 }
@@ -96,7 +146,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 		temporary := make([]VetorHash, len(hash_table.Indices)*2)
 		copy(temporary, hash_table.Indices)
 		hash_table.Indices = temporary
-		Rehash(hash_table)
+		Rehash(hash_table, Nome_input)
 		Indice = Peso_strings(Nome_input, hash_table)
 	}
 
@@ -131,12 +181,18 @@ func BuscaHash(hash_table *Hash, Nome_search string) {
 	// Calcula o índice onde os dados devem estar
 	Indice := Peso_strings(Nome_search, hash_table)
 
+	if len(hash_table.Indices) <= Indice {
+		fmt.Println("\nNenhum dado encontrado")
+		return
+	}
+
 	// Começa a busca no primeiro Dados no índice
 	current := hash_table.Indices[Indice].Dados_Usuario
 
 	// Se não há dados no índice, imprime uma mensagem
 	if current == nil {
-		fmt.Println("Nenhum dado encontrado")
+		fmt.Println("\nNenhum dado encontrado")
+		return
 	}
 
 	// Percorre a lista ligada no índice, imprimindo os dados que correspondem ao nome buscado
@@ -152,15 +208,16 @@ func BuscaHash(hash_table *Hash, Nome_search string) {
 	}
 }
 
-func Rehash(hash_table *Hash) {
+func Rehash(hash_table *Hash, novoNome string) {
 
-	fmt.Print("Iniciando rehash", "\n\n")
+	fmt.Print("\nIniciando rehash", "\n\n")
 	Referencia := hash_table.Referencias
 	hash_table.Referencias = make([]int, 0)
+	hash_table.Quantidade = 0
 
 	i := 0
 	max := 100
-	for FlagNovoPeso(hash_table, Referencia) && i < max {
+	for FlagNovoPeso(hash_table, Referencia, novoNome) && i < max {
 		i++
 	}
 
@@ -190,11 +247,20 @@ func Rehash(hash_table *Hash) {
 		fmt.Println("Erro de rehash!")
 		return
 	}
+	fmt.Println("Fim da rerash")
 
 }
 
 // FlagNovoPeso é uma função que recebe uma tabela hash e retorna um booleano.
-func FlagNovoPeso(hash_table *Hash, Referencia []int) bool {
+func FlagNovoPeso(hash_table *Hash, Referencia []int, novoNome string) bool {
+
+	if Peso_strings(novoNome, hash_table) >= len(hash_table.Indices) {
+		temporary := make([]VetorHash, Peso_strings(novoNome, hash_table)+1)
+		copy(temporary, hash_table.Indices)
+		hash_table.Indices = temporary
+		// A função retorna true indicando necessidade de aumentar vetor novamente.
+		return true
+	}
 
 	// O loop for percorre cada índice na lista de referências da tabela hash.
 	for _, indice := range Referencia {
