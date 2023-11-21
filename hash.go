@@ -6,14 +6,14 @@ import (
 
 // Estrutura Hash que contém um slice de VetorHash, um contador de quantidade, e um vetor para salvar indices adicionados
 type Hash struct {
-	Indices    []VetorHash
+	Indices     []VetorHash
 	Referencias []int
-	Quantidade int
+	Quantidade  int
 }
 
 // Estrutura VetorHash que contém um ponteiro para Dados e um verificador de colisão
 type VetorHash struct {
-	Dados_Usuario     *Dados
+	Dados_Usuario       *Dados
 	Verificador_colisao bool
 }
 
@@ -77,17 +77,17 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 
 	// Calcula o índice onde os dados devem ser inseridos
 	Indice := Peso_strings(Nome_input, hash_table)
-	
+
 	// Cria um novo Dados com as informações do usuário
 	Informacoes := &Dados{Nome: Nome_input, Endereco: Endereco_input, Telefone: Telefone_input}
-	
+
 	// Se o índice for maior do que o tamanho do slice, redimensiona o slice
-	if len(hash_table.Indices) <= Indice { 
+	if len(hash_table.Indices) <= Indice {
 		temporary := make([]VetorHash, len(hash_table.Indices)*2)
 		copy(temporary, hash_table.Indices)
 		hash_table.Indices = temporary
 	}
-	
+
 	// Cria um alias para o VetorHash no índice
 	Hash := &hash_table.Indices[Indice]
 
@@ -99,7 +99,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 	} else {
 		current := Hash.Dados_Usuario
 		for current.Next != nil {
-			if(Informacoes.Nome != current.Nome){
+			if Informacoes.Nome != current.Nome {
 				Hash.Verificador_colisao = true
 			}
 			current = Hash.Dados_Usuario.Next
@@ -131,7 +131,7 @@ func BuscaHash(hash_table *Hash, Nome_search string) {
 	for current != nil {
 		if current.Nome == Nome_search {
 			i++
-			fmt.Printf("\nNome: %s (%d)", current.Nome,i)
+			fmt.Printf("\nNome: %s (%d)", current.Nome, i)
 			fmt.Printf("\nEndereço: %s", current.Endereco)
 			fmt.Printf("\nTelefone: %s\n", current.Telefone)
 		}
@@ -139,18 +139,74 @@ func BuscaHash(hash_table *Hash, Nome_search string) {
 	}
 }
 
-func Rehash(hash_table *Hash){
+func Rehash(hash_table *Hash) {
 
-	for _, indice := range hash_table.Referencias{
+	// Novo
+	i := 0
+	max := 100
+	for FlagNovoPeso(hash_table) && i < max {
+		i++
+	}
+
+	// If novo
+	if i < max {
+		for _, indice := range hash_table.Referencias {
+			Hash := hash_table.Indices[indice]
+			if Hash.Verificador_colisao {
+
+			} else {
+				NovoIndice := Peso_strings(Hash.Dados_Usuario.Nome, hash_table)
+				hash_table.Indices[NovoIndice].Dados_Usuario = Hash.Dados_Usuario
+				hash_table.Indices[NovoIndice].Verificador_colisao = false
+
+				//Novo
+				Hash.Dados_Usuario = nil
+			}
+		}
+	} else {
+		fmt.Println("Erro de rehash!")
+		return
+	}
+
+}
+
+// Novo
+// FlagNovoPeso é uma função que recebe uma tabela hash e retorna um booleano.
+func FlagNovoPeso(hash_table *Hash) bool {
+
+	// O loop for percorre cada índice na lista de referências da tabela hash.
+	for _, indice := range hash_table.Referencias {
+		// Hash é um alias que armazena o valor no índice atual da tabela hash.
 		Hash := hash_table.Indices[indice]
+		// Se o verificador de colisão do Hash for verdadeiro, o código dentro deste bloco if será executado.
 		if Hash.Verificador_colisao {
-
+			current := Hash.Dados_Usuario
+			// Este loop for continuará enquanto current não for nil.
+			for current != nil {
+				NovoIndice := Peso_strings(current.Nome, hash_table)
+				// Se o tamanho da lista de índices da tabela hash for menor ou igual a NovoIndice, ajusta o tamanho do vetor.
+				if len(hash_table.Indices) <= NovoIndice {
+					temporary := make([]VetorHash, NovoIndice+1)
+					copy(temporary, hash_table.Indices)
+					hash_table.Indices = temporary
+					// A função retorna true indicando necessidade de aumentar vetor novamente.
+					return true
+				}
+				// current é atualizado para ser o próximo valor na lista ligada.
+				current = current.Next
+			}
 		} else {
 			NovoIndice := Peso_strings(Hash.Dados_Usuario.Nome, hash_table)
-			hash_table.Indices[NovoIndice].Dados_Usuario = Hash.Dados_Usuario
-			hash_table.Indices[NovoIndice].Verificador_colisao = false
-			
+			// Se o tamanho da lista de índices da tabela hash for menor ou igual a NovoIndice, o código dentro deste bloco if será executado.
+			if len(hash_table.Indices) <= NovoIndice {
+				temporary := make([]VetorHash, NovoIndice+1)
+				copy(temporary, hash_table.Indices)
+				hash_table.Indices = temporary
+				// A função retorna true indicando necessidade de aumentar vetor novamente.
+				return true
+			}
 		}
-
 	}
+	// Se o loop for terminar sem retornar true, a função retornará false, indicando que não é preciso aumentar vetor novamente.
+	return false
 }
