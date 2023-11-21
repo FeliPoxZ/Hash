@@ -79,7 +79,6 @@ func Peso_strings(nome string, hash_table *Hash) int {
 
 	// Calcula o índice baseado no peso e no tamanho do slice
 	Resto := Peso % (len(hash_table.Indices) + 1)
-	//println(Peso)
 	return Resto
 }
 
@@ -98,6 +97,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 		copy(temporary, hash_table.Indices)
 		hash_table.Indices = temporary
 		Rehash(hash_table)
+		Indice = Peso_strings(Nome_input, hash_table)
 	}
 
 	// Cria um alias para o VetorHash no índice
@@ -165,34 +165,27 @@ func Rehash(hash_table *Hash) {
 	}
 
 	if i < max {
+		// Cria um slice temporário para armazenar os dados
+		tempDados := make([]*Dados, 0)
 		for _, indice := range Referencia {
 			Hash_Auxiliar := hash_table.Indices[indice]
-			if Hash_Auxiliar.Verificador_colisao {
-				current := Hash_Auxiliar.Dados_Usuario
-				for current != nil {
-					InserirDados(hash_table, current.Nome, current.Endereco, current.Telefone)
-					current = current.Next
-				}
-				Hash_Auxiliar.Dados_Usuario = nil
-				Hash_Auxiliar.Verificador_colisao = false
-			} else {
-				NovoIndice := Peso_strings(Hash_Auxiliar.Dados_Usuario.Nome, hash_table)
-				if hash_table.Indices[NovoIndice].Dados_Usuario == nil {
-					hash_table.Indices[NovoIndice].Dados_Usuario = Hash_Auxiliar.Dados_Usuario
-					hash_table.Indices[NovoIndice].Verificador_colisao = false
-					hash_table.Referencias = append(hash_table.Referencias, NovoIndice)
-				} else {
-					current := hash_table.Indices[NovoIndice].Dados_Usuario
-					for current.Next != nil {
-						current = current.Next
-					}
-					current.Next = Hash_Auxiliar.Dados_Usuario
-					hash_table.Indices[NovoIndice].Verificador_colisao = true
-				}
-				Hash_Auxiliar.Dados_Usuario = nil
+			current := Hash_Auxiliar.Dados_Usuario
+			for current != nil {
+				tempDados = append(tempDados, current)
+				current = current.Next
 			}
 			Hash_Auxiliar.Dados_Usuario = nil
+			Hash_Auxiliar.Verificador_colisao = false
 		}
+
+		// Limpa a tabela hash
+		hash_table.Indices = make([]VetorHash, len(hash_table.Indices))
+
+		// Insere os dados novamente na tabela hash
+		for _, dados := range tempDados {
+			InserirDados(hash_table, dados.Nome, dados.Endereco, dados.Telefone)
+		}
+
 	} else {
 		fmt.Println("Erro de rehash!")
 		return
