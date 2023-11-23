@@ -53,7 +53,8 @@ func main() {
 	MostraHash(hash, hash.Referencias)
 
 	// Deleta um elemento do Hash
-	DeleteAllHash(hash, "Felipe")
+	//DeleteAllHash(hash, "Felipe")
+	DeleteHash(hash, "Felipe")
 
 	// Mostra o Hash após a deleção
 	MostraHash(hash, hash.Referencias)
@@ -384,116 +385,71 @@ func DeleteHash(hash_table *Hash, Nome_Delete string) {
 	}
 }
 
+// DeleteAllHash é uma função que remove todas as ocorrências de um nome específico (Nome_Delete) da tabela hash.
+// A função começa calculando a posição do nome na tabela hash usando a função Peso_strings.
 func DeleteAllHash(hash_table *Hash, Nome_Delete string) {
-	/* Position := Peso_strings(Nome_Delete, hash_table)
 
-	Hash := hash_table.Indices[Position]
-	count := 0
-	count2 := 0
-
-	if Hash.Verificador_colisao {
-		current := Hash.Dados_Usuario
-		Current_Prev := current
-		for current.Next != nil {
-			if current.Nome == current.Next.Nome && current.Nome == Nome_Delete {
-				if count2 == 0 {
-					Hash.Dados_Usuario = current.Next
-					current = current.Next
-					Current_Prev = Current_Prev.Next
-					count2++
-				} else {
-					Current_Prev = Hash.Dados_Usuario
-					for Current_Prev != nil && Current_Prev.Next != current {
-						Current_Prev = Current_Prev.Next
-					}
-					Current_Prev.Next = current.Next
-					current = current.Next
-					Current_Prev = current
-				}
-			} else {
-				if current.Nome == Nome_Delete {
-					if count == 0 {
-						Hash.Dados_Usuario = current.Next
-						current = current.Next
-						Current_Prev = current
-						count++
-					} else {
-						Current_Prev = Hash.Dados_Usuario
-						for Current_Prev.Next != current {
-							Current_Prev = Current_Prev.Next
-						}
-
-						Current_Prev.Next = current.Next
-						current = current.Next
-
-					}
-				} else {
-					current = current.Next
-					if current.Nome == Nome_Delete {
-						Current_Prev.Next = current.Next
-						current = current.Next
-						Current_Prev = current
-					} else {
-						Current_Prev = Current_Prev.Next
-					}
-				}
-
-			}
-		}
-		///////////////////////////////////////////////////
-		count = 0
-		count2 = 0
-		if current.Nome == Nome_Delete {
-			Current_Prev = Hash.Dados_Usuario
-			for Current_Prev.Next != current {
-				Current_Prev = Current_Prev.Next
-			}
-			Current_Prev.Next = current.Next
-		}
-		current = nil
-		Current_Prev = nil
-	*/
-
+	// Calcula a posição do nome na tabela hash.
 	Position := Peso_strings(Nome_Delete, hash_table)
+	// Cria um ponteiro para o VetorHash na posição calculada.
 	Hash := &hash_table.Indices[Position]
 
+	// Verifica se há colisão na posição calculada.
 	if Hash.Verificador_colisao {
+		// Se houver colisão, a função percorre a lista ligada na posição.
 		current := Hash.Dados_Usuario
 		var prev *Dados
 
+		// Percorre a lista ligada.
 		for current != nil {
+			// Se o nome do usuário atual for igual ao nome a ser deletado.
 			if current.Nome == Nome_Delete {
+				// Se prev não for nil, atualiza o próximo de prev para ser o próximo de current.
+				// Caso contrário, atualiza o Dados_Usuario de Hash para ser o próximo de current.
 				if prev != nil {
 					prev.Next = current.Next
 				} else {
 					Hash.Dados_Usuario = current.Next
 				}
 			} else {
+				// Se o nome do usuário atual não for igual ao nome a ser deletado, atualiza prev para ser current.
 				prev = current
 			}
+			// Se current não for nil, atualiza current para ser o próximo de current.
 			if current != nil {
 				current = current.Next
 			}
 		}
 
+		// Atualiza current para ser Dados_Usuario de Hash.
 		current = Hash.Dados_Usuario
+		// Define o verificador de colisão na posição como falso.
 		hash_table.Indices[Position].Verificador_colisao = false
+		// Percorre a lista ligada novamente.
 		for current != nil {
+			// Se o próximo de current não for nil e o nome de current não for igual ao nome do próximo de current.
+			// Define o verificador de colisão na posição como verdadeiro.
 			if current.Next != nil && current.Nome != current.Next.Nome {
 				hash_table.Indices[Position].Verificador_colisao = true
 			}
+			// Atualiza current para ser o próximo de current.
 			current = current.Next
 		}
 
 	} else {
+		// Se não houver colisão na posição, define Dados_Usuario de Hash e o verificador de colisão como nil e falso, respectivamente.
 		Hash.Dados_Usuario = nil
 		Hash.Verificador_colisao = false
+		// Cria um slice auxiliar de referências com o mesmo tamanho do slice de referências da tabela hash.
 		Referencias_auxiliar := make([]int, len(hash_table.Referencias))
+		// Percorre o slice de referências da tabela hash.
 		for _, Conteudo := range hash_table.Referencias {
+			// Se o conteúdo não for igual à posição, adiciona o conteúdo ao slice auxiliar de referências.
 			if Conteudo != Position {
 				Referencias_auxiliar = append(Referencias_auxiliar, Conteudo)
 			}
 		}
+		// Atualiza o slice de referências da tabela hash para ser o slice auxiliar de referências.
 		hash_table.Referencias = Referencias_auxiliar
 	}
 }
