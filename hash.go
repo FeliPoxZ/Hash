@@ -51,7 +51,7 @@ func main() {
 	MostraHash(hash, hash.Referencias)
 
 	// Deleta um elemento do Hash
-	DeleteHash(hash, "Quelli")
+	DeleteAllHash(hash, "Felipe")
 
 	// Mostra o Hash após a deleção
 	MostraHash(hash, hash.Referencias)
@@ -105,7 +105,8 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 
 	// Se o VetorHash no índice não contém dados, insere os dados
 	// Se já contém dados, insere os novos dados no final da lista ligada
-	if Hash.Dados_Usuario == nil {		Hash.Dados_Usuario = Informacoes
+	if Hash.Dados_Usuario == nil {
+		Hash.Dados_Usuario = Informacoes
 		hash_table.Referencias = append(hash_table.Referencias, Indice)
 	} else {
 		current := Hash.Dados_Usuario
@@ -222,7 +223,8 @@ func FlagNovoPeso(hash_table *Hash, Referencia []int, novoNome string) bool {
 			for current != nil {
 				NovoIndice := Peso_strings(current.Nome, hash_table)
 				// Se o tamanho da lista de índices da tabela hash for menor ou igual a NovoIndice, ajusta o tamanho do vetor.
-				if len(hash_table.Indices) <= NovoIndice {					temporary := make([]VetorHash, NovoIndice+1)
+				if len(hash_table.Indices) <= NovoIndice {
+					temporary := make([]VetorHash, NovoIndice+1)
 					copy(temporary, hash_table.Indices)
 					hash_table.Indices = temporary
 					// A função retorna true indicando necessidade de aumentar vetor novamente.
@@ -328,7 +330,7 @@ func DeleteHash(hash_table *Hash, Nome_Delete string) {
 					// Adiciona o conteúdo ao vetor auxiliar de referências
 					Referencias_auxiliar = append(Referencias_auxiliar, conteudo)
 				}
-			}			// Atualiza a lista de referências
+			} // Atualiza a lista de referências
 			hash_table.Referencias = Referencias_auxiliar
 		} else {
 			//Essa parte é apenas para teste -> integração com o front
@@ -380,6 +382,98 @@ func DeleteHash(hash_table *Hash, Nome_Delete string) {
 	}
 }
 
+func DeleteAllHash(hash_table *Hash, Nome_Delete string) {
+	Position := Peso_strings(Nome_Delete, hash_table)
+
+	Hash := hash_table.Indices[Position]
+	count := 0
+	count2 := 0
+
+	if Hash.Verificador_colisao {
+		current := Hash.Dados_Usuario
+		Current_Prev := current
+		for current.Next != nil {
+			if current.Nome == current.Next.Nome && current.Nome == Nome_Delete {
+				if count2 == 0 {
+					Hash.Dados_Usuario = current.Next
+					current = current.Next
+					Current_Prev = Current_Prev.Next
+					count2++
+				} else {
+					Current_Prev = Hash.Dados_Usuario
+					for Current_Prev != nil && Current_Prev.Next != current {
+						Current_Prev = Current_Prev.Next
+					}
+					Current_Prev.Next = current.Next
+					current = current.Next
+					Current_Prev = current
+				}
+			} else {
+				if current.Nome == Nome_Delete {
+					if count == 0 {
+						Hash.Dados_Usuario = current.Next
+						current = current.Next
+						Current_Prev = current
+						count++
+					} else {
+						Current_Prev = Hash.Dados_Usuario
+						for Current_Prev.Next != current {
+							Current_Prev = Current_Prev.Next
+						}
+
+						Current_Prev.Next = current.Next
+						current = current.Next
+
+					}
+				} else {
+					current = current.Next
+					if current.Nome == Nome_Delete {
+						Current_Prev.Next = current.Next
+						current = current.Next
+						Current_Prev = current
+					} else {
+						Current_Prev = Current_Prev.Next
+					}
+				}
+
+			}
+		}
+		///////////////////////////////////////////////////
+		count = 0
+		count2 = 0
+		if current.Nome == Nome_Delete {
+			Current_Prev = Hash.Dados_Usuario
+			for Current_Prev.Next != current {
+				Current_Prev = Current_Prev.Next
+			}
+			Current_Prev.Next = current.Next
+		}
+		current = nil
+		Current_Prev = nil
+
+		current = Hash.Dados_Usuario
+		hash_table.Indices[Position].Verificador_colisao = false
+		for current != nil {
+			if current.Nome != current.Next.Nome {
+				hash_table.Indices[Position].Verificador_colisao = true
+			}
+			current = current.Next
+		}
+
+	} else {
+		Hash.Dados_Usuario = nil
+		Hash.Verificador_colisao = false
+		Referencias_auxiliar := make([]int, len(hash_table.Referencias))
+		for _, Conteudo := range hash_table.Referencias {
+			if Conteudo != Position {
+				Referencias_auxiliar = append(Referencias_auxiliar, Conteudo)
+			}
+		}
+		hash_table.Referencias = Referencias_auxiliar
+	}
+
+}
+
 // Função para mostrar o Hash
 func MostraHash(hash_table *Hash, Referencias []int) {
 
@@ -405,4 +499,3 @@ func MostraHash(hash_table *Hash, Referencias []int) {
 
 	fmt.Println()
 }
-
