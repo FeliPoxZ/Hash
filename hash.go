@@ -54,7 +54,7 @@ func main() {
 
 	// Deleta um elemento do Hash
 	//DeleteAllHash(hash, "Felipe")
-	DeleteHash(hash, "Felipe")
+	DeleteHash(hash, "Diego")
 
 	// Mostra o Hash após a deleção
 	MostraHash(hash, hash.Referencias)
@@ -65,7 +65,7 @@ func CriaHash() *Hash {
 	// Cria um novo Hash com um slice de VetorHash de tamanho 10, um vetor de referências vazio e quantidade 0
 	hash_Table := &Hash{Indices: make([]VetorHash, 10), Referencias: make([]int, 0), Quantidade: 0}
 	return hash_Table
-	
+
 }
 
 // Função para calcular o peso de uma string
