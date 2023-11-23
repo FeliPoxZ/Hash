@@ -1,120 +1,71 @@
+// Pacote principal
 package main
 
+// Importação do pacote fmt para formatação de entrada/saída
 import (
 	"fmt"
-	"math/rand"
-	"time"
 )
 
-// Estrutura Hash que contém um slice de VetorHash, um contador de quantidade, e um vetor para salvar indices adicionados
+// Estrutura Hash que contém um slice de VetorHash, um contador de quantidade, e um vetor para salvar índices adicionados
 type Hash struct {
-	Indices     []VetorHash
-	Referencias []int
-	Quantidade  int
+	Indices     []VetorHash // Slice de VetorHash
+	Referencias []int       // Vetor para salvar índices adicionados
+	Quantidade  int         // Contador de quantidade
 }
 
 // Estrutura VetorHash que contém um ponteiro para Dados e um verificador de colisão
 type VetorHash struct {
-	Dados_Usuario       *Dados
-	Verificador_colisao bool
+	Dados_Usuario       *Dados // Ponteiro para Dados
+	Verificador_colisao bool   // Verificador de colisão
 }
 
 // Estrutura Dados que contém informações do usuário e um ponteiro para o próximo Dados
 type Dados struct {
-	Nome     string
-	Endereco string
-	Telefone string
-	Next     *Dados
+	Nome     string // Nome do usuário
+	Endereco string // Endereço do usuário
+	Telefone string // Telefone do usuário
+	Next     *Dados // Ponteiro para o próximo Dados
 }
 
+// Função principal
 func main() {
 
-	var names = []string{
-		"Alice", "Bob", "Charlie", "Dave", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy",
-		"Karen", "Larry", "Mary", "Nick", "Oliver", "Pam", "Quentin", "Rebecca", "Steve", "Tina",
-		"Uma", "Victor", "Wendy", "Xavier", "Yvonne", "Zach", "Aaron", "Bella", "Cindy", "Diana",
-		"Ethan", "Fiona", "Gary", "Hannah", "Irene", "Jack", "Kate", "Liam", "Mia", "Nora",
-		"Oscar", "Phoebe", "Quinn", "Riley", "Sophia", "Toby", "Ursula", "Vince", "Willow", "Xena",
-		"Yuri", "Zoe", "Ava", "Brad", "Celine", "Darcy", "Eli", "Felicity", "Gabriel", "Hannah",
-		"Ivy", "Jake", "Kira", "Liam", "Miles", "Natalie", "Ollie", "Penelope", "Quincy", "Riley",
-		"Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella",
-		"Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily",
-		"Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet",
-		"Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona",
-		"Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe",
-		"Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe",
-		"Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine",
-		"Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted",
-		"Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy",
-		"Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora",
-		"Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe",
-		"Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah",
-		"Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley",
-		"Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella",
-		"Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily",
-		"Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet",
-		"Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona",
-		"Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe",
-		"Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe",
-		"Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine",
-		"Kai", "Lily", "Mason", "Nora", "Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted",
-		"Ulysses", "Violet", "Walter", "Xanthe", "Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy",
-		"Eliot", "Fiona", "Gideon", "Hannah", "Ivan", "Jasmine", "Kai", "Lily", "Mason", "Nora",
-		"Oliver", "Phoebe", "Quincy", "Riley", "Sophia", "Ted", "Ulysses", "Violet", "Walter", "Xanthe",
-		"Yuri", "Zoe", "Aiden", "Bella", "Caden", "Daisy", "Eliot", "Fiona", "Gideon", "Hannah",
-		"Ivan", "Jasmine"}
-
+	// Criação de um novo Hash
 	var hash *Hash
-
-	// Cria um novo Hash
 	hash = CriaHash()
 
-	// Insere dados no Hash
-	/* 	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	   	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	   	InserirDados(hash, "Felipe", "Rua", "Telefone")
-	   	InserirDados(hash, "Ana", "Rua", "Telefone")
-	   	InserirDados(hash, "Ana", "Rua", "Telefone")
-	   	InserirDados(hash, "Gabriel", "Rua", "Telefone")
-	   	InserirDados(hash, "Otavio", "Rua", "Telefone") */
+	// Inserção de dados no Hash
+	InserirDados(hash, "Felipe", "Rua", "Telefone1")
+	InserirDados(hash, "Felipe", "Rua", "Telefone2")
+	InserirDados(hash, "Felipe", "Rua", "Telefone3")
+	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Gabriel", "Rua", "Telefone")
+	InserirDados(hash, "Otavio", "Rua", "Telefone")
+	InserirDados(hash, "Vitor", "Rua", "Telefone")
+	InserirDados(hash, "Diego", "Rua", "Telefone")
+	InserirDados(hash, "Eduardo", "Rua", "Telefone")
+	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
 
-	/* // Busca dados no Hash
-	BuscaHash(hash, "Felipe")
-	BuscaHash(hash, "Ana")
-	BuscaHash(hash, "Gabriel")
-	BuscaHash(hash, "Otavio")
-	*/
+	// Mostra o Hash
+	MostraHash(hash, hash.Referencias)
 
-	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < 100; i++ {
-		name := names[rand.Intn(len(names))]
-		InserirDados(hash, name, "Rua", "Telefone")
-	}
+	// Deleta um elemento do Hash
+	DeleteHash(hash, "Quelli")
 
-	for i := 0; i < len(hash.Indices); i++ {
-		fmt.Println(hash.Indices[i].Dados_Usuario)
-	}
-
-	for _, name := range names {
-		BuscaHash(hash, name)
-	}
-
-	fmt.Println(hash.Quantidade)
-
+	// Mostra o Hash após a deleção
+	MostraHash(hash, hash.Referencias)
 }
 
 // Função para criar um novo Hash
 func CriaHash() *Hash {
-
-	// Cria um novo Hash com um slice de VetorHash de tamanho 250
-	hash_Table := &Hash{Indices: make([]VetorHash, 5), Referencias: make([]int, 0), Quantidade: 0}
-
+	// Cria um novo Hash com um slice de VetorHash de tamanho 10, um vetor de referências vazio e quantidade 0
+	hash_Table := &Hash{Indices: make([]VetorHash, 10), Referencias: make([]int, 0), Quantidade: 0}
 	return hash_Table
 }
 
 // Função para calcular o peso de uma string
 func Peso_strings(nome string, hash_table *Hash) int {
-
 	var Peso int
 	Grau := len(nome)
 
@@ -134,7 +85,6 @@ func Peso_strings(nome string, hash_table *Hash) int {
 
 // Função para inserir dados no Hash
 func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Telefone_input string) {
-
 	// Calcula o índice onde os dados devem ser inseridos
 	Indice := Peso_strings(Nome_input, hash_table)
 
@@ -155,8 +105,7 @@ func InserirDados(hash_table *Hash, Nome_input string, Endereco_input string, Te
 
 	// Se o VetorHash no índice não contém dados, insere os dados
 	// Se já contém dados, insere os novos dados no final da lista ligada
-	if Hash.Dados_Usuario == nil {
-		Hash.Dados_Usuario = Informacoes
+	if Hash.Dados_Usuario == nil {		Hash.Dados_Usuario = Informacoes
 		hash_table.Referencias = append(hash_table.Referencias, Indice)
 	} else {
 		current := Hash.Dados_Usuario
@@ -208,6 +157,7 @@ func BuscaHash(hash_table *Hash, Nome_search string) {
 	}
 }
 
+// Função para reorganizar o Hash quando necessário
 func Rehash(hash_table *Hash, novoNome string) {
 
 	fmt.Print("\nIniciando rehash", "\n\n")
@@ -248,10 +198,9 @@ func Rehash(hash_table *Hash, novoNome string) {
 		return
 	}
 	fmt.Println("Fim da rerash")
-
 }
 
-// FlagNovoPeso é uma função que recebe uma tabela hash e retorna um booleano.
+// Função que verifica se é necessário aumentar o vetor novamente
 func FlagNovoPeso(hash_table *Hash, Referencia []int, novoNome string) bool {
 
 	if Peso_strings(novoNome, hash_table) >= len(hash_table.Indices) {
@@ -273,8 +222,7 @@ func FlagNovoPeso(hash_table *Hash, Referencia []int, novoNome string) bool {
 			for current != nil {
 				NovoIndice := Peso_strings(current.Nome, hash_table)
 				// Se o tamanho da lista de índices da tabela hash for menor ou igual a NovoIndice, ajusta o tamanho do vetor.
-				if len(hash_table.Indices) <= NovoIndice {
-					temporary := make([]VetorHash, NovoIndice+1)
+				if len(hash_table.Indices) <= NovoIndice {					temporary := make([]VetorHash, NovoIndice+1)
 					copy(temporary, hash_table.Indices)
 					hash_table.Indices = temporary
 					// A função retorna true indicando necessidade de aumentar vetor novamente.
@@ -298,3 +246,163 @@ func FlagNovoPeso(hash_table *Hash, Referencia []int, novoNome string) bool {
 	// Se o loop for terminar sem retornar true, a função retornará false, indicando que não é preciso aumentar vetor novamente.
 	return false
 }
+
+// Função para deletar um elemento do Hash
+func DeleteHash(hash_table *Hash, Nome_Delete string) {
+	// Calcula a posição do elemento a ser deletado
+	Position := Peso_strings(Nome_Delete, hash_table)
+
+	// Cria um alias para o VetorHash na posição
+	Hash := &hash_table.Indices[Position]
+	var Telefone_Auxiliar string
+
+	// Se o VetorHash na posição tem colisão
+	if Hash.Verificador_colisao {
+		// Para teste
+		fmt.Printf("Qual %s Deseja remover?\n", Nome_Delete)
+		BuscaHash(hash_table, Nome_Delete)
+		fmt.Printf("Especifique o Numero do %s para remover o contato\n", Nome_Delete)
+		fmt.Scanf("%s", &Telefone_Auxiliar)
+		/* ------------------------------ */
+		count := 0
+		current := Hash.Dados_Usuario
+		Current_Prev := Hash.Dados_Usuario
+
+		// Se o telefone do usuário atual é igual ao telefone auxiliar
+		if current.Telefone == Telefone_Auxiliar {
+			// Remove o usuário atual
+			Hash.Dados_Usuario = current.Next
+			return
+		}
+
+		// Enquanto o telefone do usuário atual não for igual ao telefone auxiliar
+		for current.Telefone != Telefone_Auxiliar {
+			if count == 0 {
+				current = current.Next
+				count++
+			} else {
+				current = current.Next
+				Current_Prev = Current_Prev.Next
+				// Se o usuário atual for nil, imprime uma mensagem e retorna
+				if current == nil {
+					fmt.Println("Contato nao encontrado")
+					return
+				}
+			}
+		}
+
+		count = 0
+		// Se o nome do usuário atual é igual ao nome a ser deletado
+		if current.Nome == Nome_Delete {
+			// Remove o usuário atual
+			Current_Prev.Next = current.Next
+		} else {
+			fmt.Println("Contato nao encontrado")
+			return
+		}
+
+		// Define o verificador de colisão como falso
+		hash_table.Indices[Position].Verificador_colisao = false
+		current2 := Hash.Dados_Usuario
+		// Enquanto o próximo usuário não for nil
+		for current2.Next != nil {
+			// Se o nome do usuário atual não for igual ao nome do próximo usuário
+			if current2.Nome != current2.Next.Nome {
+				// Define o verificador de colisão como verdadeiro
+				hash_table.Indices[Position].Verificador_colisao = true
+			}
+			current2 = current2.Next
+		}
+	} else {
+		// Se o próximo usuário for nil
+		if Hash.Dados_Usuario.Next == nil {
+			// Remove o usuário atual
+			Hash.Dados_Usuario = nil
+			// Define o verificador de colisão como falso
+			Hash.Verificador_colisao = false
+			Referencias_auxiliar := make([]int, 0)
+			// Para cada conteúdo na lista de referências
+			for _, conteudo := range hash_table.Referencias {
+				// Se o conteúdo não for igual à posição
+				if conteudo != Position {
+					// Adiciona o conteúdo ao vetor auxiliar de referências
+					Referencias_auxiliar = append(Referencias_auxiliar, conteudo)
+				}
+			}			// Atualiza a lista de referências
+			hash_table.Referencias = Referencias_auxiliar
+		} else {
+			//Essa parte é apenas para teste -> integração com o front
+			fmt.Printf("Qual %s Deseja remover?\n", Nome_Delete)
+			BuscaHash(hash_table, Nome_Delete)
+			fmt.Printf("Especifique o Numero do %s para remover o contato\n", Nome_Delete)
+			fmt.Scanf("%s", &Telefone_Auxiliar)
+			/* ------------------------------------ */
+
+			count := 0
+			current := Hash.Dados_Usuario
+			Current_Prev := Hash.Dados_Usuario
+
+			// Se o telefone do usuário atual é igual ao telefone auxiliar
+			if current.Telefone == Telefone_Auxiliar {
+				// Remove o usuário atual
+				Hash.Dados_Usuario = current.Next
+				return
+			}
+
+			// Enquanto o telefone do usuário atual não for igual ao telefone auxiliar
+			for current.Telefone != Telefone_Auxiliar {
+				if count == 0 {
+					current = current.Next
+					count++
+				} else {
+					current = current.Next
+					Current_Prev = Current_Prev.Next
+					// Se o usuário atual for nil, imprime uma mensagem e retorna
+					if current == nil {
+						fmt.Println("Contato nao encontrado")
+						return
+					}
+				}
+			}
+			count = 0
+			// Se o nome do usuário atual é igual ao nome a ser deletado
+			if current.Nome == Nome_Delete {
+				// Remove o usuário atual
+				Current_Prev.Next = current.Next
+			} else {
+				fmt.Println("Contato nao encontrado")
+				return
+			}
+
+			// Define o verificador de colisão como falso
+			Hash.Verificador_colisao = false
+		}
+	}
+}
+
+// Função para mostrar o Hash
+func MostraHash(hash_table *Hash, Referencias []int) {
+
+	// Para cada índice na lista de referências
+	for _, indices := range Referencias {
+		Hash := &hash_table.Indices[indices]
+		if Hash.Dados_Usuario.Next == nil {
+			fmt.Printf("\nNome: %s", Hash.Dados_Usuario.Nome)
+		} else {
+			fmt.Printf("\nNome: %s -> ", Hash.Dados_Usuario.Nome)
+		}
+		current := Hash.Dados_Usuario.Next
+		// Percorre a lista ligada no índice, imprimindo os nomes
+		for current != nil {
+			if current.Next == nil {
+				fmt.Printf(" %s", current.Nome)
+			} else {
+				fmt.Printf("%s -> ", current.Nome)
+			}
+			current = current.Next
+		}
+	}
+
+	fmt.Println()
+}
+
