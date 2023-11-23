@@ -35,16 +35,18 @@ func main() {
 	hash = CriaHash()
 
 	// Inserção de dados no Hash
+	InserirDados(hash, "Ana", "Rua", "Telefone")
 	InserirDados(hash, "Felipe", "Rua", "Telefone1")
 	InserirDados(hash, "Felipe", "Rua", "Telefone2")
+	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
+	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Ana", "Rua", "Telefone")
 	InserirDados(hash, "Felipe", "Rua", "Telefone3")
 	InserirDados(hash, "Ana", "Rua", "Telefone")
 	InserirDados(hash, "Ana", "Rua", "Telefone")
-	InserirDados(hash, "Gabriel", "Rua", "Telefone")
-	InserirDados(hash, "Otavio", "Rua", "Telefone")
-	InserirDados(hash, "Vitor", "Rua", "Telefone")
 	InserirDados(hash, "Diego", "Rua", "Telefone")
 	InserirDados(hash, "Eduardo", "Rua", "Telefone")
+	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
 	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
 
 	// Mostra o Hash
@@ -383,7 +385,7 @@ func DeleteHash(hash_table *Hash, Nome_Delete string) {
 }
 
 func DeleteAllHash(hash_table *Hash, Nome_Delete string) {
-	Position := Peso_strings(Nome_Delete, hash_table)
+	/* Position := Peso_strings(Nome_Delete, hash_table)
 
 	Hash := hash_table.Indices[Position]
 	count := 0
@@ -450,11 +452,34 @@ func DeleteAllHash(hash_table *Hash, Nome_Delete string) {
 		}
 		current = nil
 		Current_Prev = nil
+	*/
+
+	Position := Peso_strings(Nome_Delete, hash_table)
+	Hash := &hash_table.Indices[Position]
+
+	if Hash.Verificador_colisao {
+		current := Hash.Dados_Usuario
+		var prev *Dados
+
+		for current != nil {
+			if current.Nome == Nome_Delete {
+				if prev != nil {
+					prev.Next = current.Next
+				} else {
+					Hash.Dados_Usuario = current.Next
+				}
+			} else {
+				prev = current
+			}
+			if current != nil {
+				current = current.Next
+			}
+		}
 
 		current = Hash.Dados_Usuario
 		hash_table.Indices[Position].Verificador_colisao = false
 		for current != nil {
-			if current.Nome != current.Next.Nome {
+			if current.Next != nil && current.Nome != current.Next.Nome {
 				hash_table.Indices[Position].Verificador_colisao = true
 			}
 			current = current.Next
@@ -471,7 +496,6 @@ func DeleteAllHash(hash_table *Hash, Nome_Delete string) {
 		}
 		hash_table.Referencias = Referencias_auxiliar
 	}
-
 }
 
 // Função para mostrar o Hash
@@ -480,20 +504,22 @@ func MostraHash(hash_table *Hash, Referencias []int) {
 	// Para cada índice na lista de referências
 	for _, indices := range Referencias {
 		Hash := &hash_table.Indices[indices]
-		if Hash.Dados_Usuario.Next == nil {
-			fmt.Printf("\nNome: %s", Hash.Dados_Usuario.Nome)
-		} else {
-			fmt.Printf("\nNome: %s -> ", Hash.Dados_Usuario.Nome)
-		}
-		current := Hash.Dados_Usuario.Next
-		// Percorre a lista ligada no índice, imprimindo os nomes
-		for current != nil {
-			if current.Next == nil {
-				fmt.Printf(" %s", current.Nome)
+		if Hash.Dados_Usuario != nil {
+			if Hash.Dados_Usuario.Next == nil {
+				fmt.Printf("\nNome: %s", Hash.Dados_Usuario.Nome)
 			} else {
-				fmt.Printf("%s -> ", current.Nome)
+				fmt.Printf("\nNome: %s -> ", Hash.Dados_Usuario.Nome)
 			}
-			current = current.Next
+			current := Hash.Dados_Usuario.Next
+			// Percorre a lista ligada no índice, imprimindo os nomes
+			for current != nil {
+				if current.Next == nil {
+					fmt.Printf(" %s", current.Nome)
+				} else {
+					fmt.Printf("%s -> ", current.Nome)
+				}
+				current = current.Next
+			}
 		}
 	}
 
