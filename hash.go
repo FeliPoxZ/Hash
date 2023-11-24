@@ -35,26 +35,27 @@ func main() {
 	hash = CriaHash()
 
 	// Inserção de dados no Hash
-	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Ana", "Rua", "TelefoneAna1")
 	InserirDados(hash, "Felipe", "Rua", "Telefone1")
 	InserirDados(hash, "Felipe", "Rua", "Telefone2")
-	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
-	InserirDados(hash, "Ana", "Rua", "Telefone")
-	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli1")
+	InserirDados(hash, "Ana", "Rua", "TelefoneAna2")
+	InserirDados(hash, "Ana", "Rua", "TelefoneAna3")
 	InserirDados(hash, "Felipe", "Rua", "Telefone3")
-	InserirDados(hash, "Ana", "Rua", "Telefone")
-	InserirDados(hash, "Ana", "Rua", "Telefone")
+	InserirDados(hash, "Ana", "Rua", "TelefoneAna4")
+	InserirDados(hash, "Ana", "Rua", "TelefoneAna5")
 	InserirDados(hash, "Diego", "Rua", "Telefone")
 	InserirDados(hash, "Eduardo", "Rua", "Telefone")
-	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
-	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli")
+	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli2")
+	InserirDados(hash, "Quelli", "Rua", "TelefoneQuelli3")
 
 	// Mostra o Hash
 	MostraHash(hash, hash.Referencias)
 
 	// Deleta um elemento do Hash
-	//DeleteAllHash(hash, "Felipe")
-	DeleteHash(hash, "Diego")
+	DeleteAllHash(hash, "Felipe")
+	DeleteAllHash(hash, "Quelli")
+	
 
 	// Mostra o Hash após a deleção
 	MostraHash(hash, hash.Referencias)
@@ -253,136 +254,88 @@ func FlagNovoPeso(hash_table *Hash, Referencia []int, novoNome string) bool {
 	return false
 }
 
-// Função para deletar um elemento do Hash
-func DeleteHash(hash_table *Hash, Nome_Delete string) {
-	// Calcula a posição do elemento a ser deletado
+func DeleteHash(hash_table *Hash, Nome_Delete string, Telefone_Delete string) {
 	Position := Peso_strings(Nome_Delete, hash_table)
-
-	// Cria um alias para o VetorHash na posição
 	Hash := &hash_table.Indices[Position]
-	var Telefone_Auxiliar string
 
-	// Se o VetorHash na posição tem colisão
+	count := 0
+
+	current := Hash.Dados_Usuario
+	var prev *Dados
+
 	if Hash.Verificador_colisao {
-		// Para teste
-		fmt.Printf("Qual %s Deseja remover?\n", Nome_Delete)
-		BuscaHash(hash_table, Nome_Delete)
-		fmt.Printf("Especifique o Numero do %s para remover o contato\n", Nome_Delete)
-		fmt.Scanf("%s", &Telefone_Auxiliar)
-		/* ------------------------------ */
-		count := 0
-		current := Hash.Dados_Usuario
-		Current_Prev := Hash.Dados_Usuario
-
-		// Se o telefone do usuário atual é igual ao telefone auxiliar
-		if current.Telefone == Telefone_Auxiliar {
-			// Remove o usuário atual
-			Hash.Dados_Usuario = current.Next
-			return
-		}
-
-		// Enquanto o telefone do usuário atual não for igual ao telefone auxiliar
-		for current.Telefone != Telefone_Auxiliar {
-			if count == 0 {
-				current = current.Next
-				count++
-			} else {
-				current = current.Next
-				Current_Prev = Current_Prev.Next
-				// Se o usuário atual for nil, imprime uma mensagem e retorna
+		for current != nil {
+			if current != nil && count == 0 && current.Nome == Nome_Delete && current.Telefone == Telefone_Delete {
+				Hash.Dados_Usuario = current.Next
+				count = 1
+				return
+			}else{
 				if current == nil {
-					fmt.Println("Contato nao encontrado")
 					return
 				}
+				if current.Nome == Nome_Delete && current.Telefone == Telefone_Delete {
+					prev.Next = current.Next
+					current = current.Next
+				}
 			}
+
+			if current == nil{
+				return
+			}
+			count = 1
+			prev = current
+			current = current.Next
+
 		}
 
-		count = 0
-		// Se o nome do usuário atual é igual ao nome a ser deletado
-		if current.Nome == Nome_Delete {
-			// Remove o usuário atual
-			Current_Prev.Next = current.Next
-		} else {
-			fmt.Println("Contato nao encontrado")
-			return
-		}
-
-		// Define o verificador de colisão como falso
-		hash_table.Indices[Position].Verificador_colisao = false
-		current2 := Hash.Dados_Usuario
-		// Enquanto o próximo usuário não for nil
-		for current2.Next != nil {
-			// Se o nome do usuário atual não for igual ao nome do próximo usuário
-			if current2.Nome != current2.Next.Nome {
-				// Define o verificador de colisão como verdadeiro
-				hash_table.Indices[Position].Verificador_colisao = true
+		Hash.Verificador_colisao = false
+		current = Hash.Dados_Usuario
+		for current != nil {
+			if current.Next != nil && current.Nome != current.Next.Nome {
+				Hash.Verificador_colisao = true
 			}
-			current2 = current2.Next
+			current = current.Next
 		}
 	} else {
-		// Se o próximo usuário for nil
-		if Hash.Dados_Usuario.Next == nil {
-			// Remove o usuário atual
+		if current.Next == nil{
 			Hash.Dados_Usuario = nil
-			// Define o verificador de colisão como falso
 			Hash.Verificador_colisao = false
 			Referencias_auxiliar := make([]int, 0)
-			// Para cada conteúdo na lista de referências
-			for _, conteudo := range hash_table.Referencias {
-				// Se o conteúdo não for igual à posição
-				if conteudo != Position {
-					// Adiciona o conteúdo ao vetor auxiliar de referências
+
+			for _, conteudo := range hash_table.Referencias{
+				if conteudo != Position{
 					Referencias_auxiliar = append(Referencias_auxiliar, conteudo)
 				}
-			} // Atualiza a lista de referências
-			hash_table.Referencias = Referencias_auxiliar
-		} else {
-			//Essa parte é apenas para teste -> integração com o front
-			fmt.Printf("Qual %s Deseja remover?\n", Nome_Delete)
-			BuscaHash(hash_table, Nome_Delete)
-			fmt.Printf("Especifique o Numero do %s para remover o contato\n", Nome_Delete)
-			fmt.Scanf("%s", &Telefone_Auxiliar)
-			/* ------------------------------------ */
-
-			count := 0
-			current := Hash.Dados_Usuario
-			Current_Prev := Hash.Dados_Usuario
-
-			// Se o telefone do usuário atual é igual ao telefone auxiliar
-			if current.Telefone == Telefone_Auxiliar {
-				// Remove o usuário atual
-				Hash.Dados_Usuario = current.Next
-				return
 			}
-
-			// Enquanto o telefone do usuário atual não for igual ao telefone auxiliar
-			for current.Telefone != Telefone_Auxiliar {
-				if count == 0 {
+			hash_table.Referencias = Referencias_auxiliar
+			return
+		}
+		current = Hash.Dados_Usuario
+		for current != nil {
+			if current != nil && count == 0 && current.Nome == Nome_Delete && current.Telefone == Telefone_Delete {
+				Hash.Dados_Usuario = current.Next
+				count = 1
+				return
+			}else{
+				if current == nil {
+					return
+				}
+				if current.Nome == Nome_Delete && current.Telefone == Telefone_Delete {
+					prev.Next = current.Next
 					current = current.Next
-					count++
-				} else {
-					current = current.Next
-					Current_Prev = Current_Prev.Next
-					// Se o usuário atual for nil, imprime uma mensagem e retorna
-					if current == nil {
-						fmt.Println("Contato nao encontrado")
-						return
-					}
 				}
 			}
-			count = 0
-			// Se o nome do usuário atual é igual ao nome a ser deletado
-			if current.Nome == Nome_Delete {
-				// Remove o usuário atual
-				Current_Prev.Next = current.Next
-			} else {
-				fmt.Println("Contato nao encontrado")
+
+			if current == nil{
 				return
 			}
+			count = 1
+			prev = current
+			current = current.Next
 
-			// Define o verificador de colisão como falso
-			Hash.Verificador_colisao = false
 		}
+		
+
 	}
 }
 
@@ -458,6 +411,7 @@ func DeleteAllHash(hash_table *Hash, Nome_Delete string) {
 // Função para mostrar o Hash
 func MostraHash(hash_table *Hash, Referencias []int) {
 
+	
 	// Para cada índice na lista de referências
 	for _, indices := range Referencias {
 		Hash := &hash_table.Indices[indices]
